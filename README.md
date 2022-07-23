@@ -1,5 +1,7 @@
 # test-gravitel
-Тестовое задание Gravitel## Available Scripts
+Тестовое задание Gravitel
+
+## Available Scripts
 
 In the project directory, you can run:
 

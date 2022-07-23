@@ -1,4 +1,4 @@
 import { GraphQLClient } from 'graphql-hooks'
 import { SERVER } from '../utils/api-constants/server'
 
-export const grathQLCLient = new GraphQLClient(SERVER);
+export const graphQLCLientHooks = new GraphQLClient(SERVER);

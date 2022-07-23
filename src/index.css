@@ -2,6 +2,11 @@ body {
   background: var(--text-primary-color);
 }
 
+#root {
+  position: relative;
+  z-index: 0;
+}
+
 .center-container {
   display: flex;
   width: 100%;
@@ -30,6 +35,10 @@ input:-webkit-autofill:active
 
 .input__textfield {
   color: var(--background-element);
+}
+
+.input_status_active {
+  border: 2px solid #f9a600;
 }
 
 .form {

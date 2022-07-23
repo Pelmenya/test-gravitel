@@ -4,10 +4,12 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { App } from './components/app/app';
 import reportWebVitals from './reportWebVitals';
 import { ClientContext } from 'graphql-hooks'
+import { Provider as ReduxProvider } from 'react-redux';
 
 import '@ya.praktikum/react-developer-burger-ui-components';
 import './index.css';
-import { grathQLCLient } from './graphql-client/graphql-client';
+import { graphQLCLientHooks } from './graphql-clients/graphql-client-hooks';
+import { store } from './services/redux/store';
 //import { Provider as ReduxProvider } from 'react-redux';
 //import { store } from './services/redux/store';
 
@@ -15,11 +17,13 @@ import { grathQLCLient } from './graphql-client/graphql-client';
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLDivElement);
 root.render(
   <React.StrictMode>
-    <Router>
-      <ClientContext.Provider value={grathQLCLient}>
-        <App />
-      </ClientContext.Provider>
-    </Router>
+    <ReduxProvider store={store}>
+      <Router>
+        <ClientContext.Provider value={graphQLCLientHooks}>
+          <App />
+        </ClientContext.Provider>
+      </Router>
+    </ReduxProvider>
   </React.StrictMode>,
 );
 
