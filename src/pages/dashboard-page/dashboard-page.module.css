@@ -1,0 +1,19 @@
+.container {
+	width: 300px;
+	height: 300px;
+	cursor: pointer;
+	position: relative;
+	display: flex;
+}
+
+.info {
+	position: absolute;
+	background: #fff;
+	top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+	width: 260px;
+	height: 260px;
+	z-index: 0;
+	border-radius: 50%;
+}

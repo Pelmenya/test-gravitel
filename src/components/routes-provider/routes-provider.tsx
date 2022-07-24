@@ -1,13 +1,15 @@
-import { Routes, Route, Outlet } from 'react-router-dom';
+import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { DashBoard } from '../../pages/dashboard-page/dashboard-page';
 import { LoginPage } from '../../pages/login-page/login-page';
+import { NotFoundPage } from '../../pages/not-found-page/not-found';
+import { ProtectedRoute } from './components/protected-route';
 
 export const RoutesProvider = () => {
   return (
     <Routes>
-      <Route path='/' element={<Outlet />}>
-        <Route path='dashboard' element={<div>DASHBOARD</div>} />
-        <Route path='login' element={<LoginPage />} />
-        <Route path='*' element={<>NotFound</>} />
-      </Route>
+      <Route path='/' element={<ProtectedRoute redirect='/login' element={<DashBoard />} />} />
+      <Route path='dashboard' element={<ProtectedRoute redirect='/login' element={<DashBoard />} />} />
+      <Route path='login' element={<LoginPage />} />
+      <Route path='*' element={<NotFoundPage />} />
     </Routes>)
 };

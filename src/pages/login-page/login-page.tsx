@@ -1,22 +1,20 @@
 import cn from 'classnames';
 import * as yup from 'yup';
-import { GraphQLClient } from 'graphql-request'
 import { FieldValues, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-
 import { ProfileFormContainer } from '../../components/profile-form-container/profile-form-container';
 import { ButtonWithChildren } from '../../components/button-with-children/button-with-children';
 import { InputText } from '../../components/profile-form-container/components/input-universal/input-universal';
 import { InputPassword } from '../../components/profile-form-container/components/input-password/input-password';
 import { Navigate, useLocation } from 'react-router';
 import { LocationStateType } from '../../utils/types/location-state-type';
-import loginPageStyle from './login.module.css';
-import { SERVER } from '../../utils/api-constants/server';
 import { createLoginQuery } from '../../utils/query-creators/createLoginQuery';
 import { useState } from 'react';
 import { useAppDispatch } from '../../hooks/use-app-dispatch';
 import { setError } from '../../services/redux/slices/error-request/error-request';
 import { parseError } from '../../utils/functions/parseError';
+import loginPageStyle from './login.module.css';
+import { graphQLClient } from '../../graphql-clients/graphql-client';
 
 const schema = yup
   .object({
@@ -25,17 +23,14 @@ const schema = yup
   })
   .required();
 
-export const LoginPage = () => {
+export const LoginPage = () => {  
   const dispatch = useAppDispatch();
-
   const [loading, setLoading] = useState(false);
-
   const accessToken = localStorage.getItem('accessToken')
-
 
   const location = useLocation() as LocationStateType;
 
-  const from = location?.state?.from || '/';
+  const from = location?.state?.from || '/dashboard';
 
   const { handleSubmit, control, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
@@ -43,11 +38,11 @@ export const LoginPage = () => {
   });
 
   const onSubmit = async (data: FieldValues) => {
-    const graphQLClient = new GraphQLClient(SERVER.url)
+    
     setLoading(true);
     try {
-      const resData = await graphQLClient.request(createLoginQuery(data.username, data.password))
-      console.log(resData)
+      const resData = await graphQLClient.request(createLoginQuery(data.username, data.password));
+      localStorage.setItem('accessToken', `Bearer ${resData.login.token}`);
       setLoading(false);
     } catch (e) {
       setLoading(false);
@@ -57,8 +52,7 @@ export const LoginPage = () => {
 
   if (accessToken) {
     return (
-      <Navigate
-        to={from}
+      <Navigate to={from}
       />
     );
   }
