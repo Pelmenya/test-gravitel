@@ -8,8 +8,8 @@ export interface IStatistic {
 
 export interface IDashBoardData {
 	dashboard: Nullable<{
-		scenarios: IStatistic[],
-		lists: IStatistic[],
-		dialogs: IStatistic[]
+		scenarios: IStatistic,
+		lists: IStatistic,
+		dialogs: IStatistic
 	}>
 }
