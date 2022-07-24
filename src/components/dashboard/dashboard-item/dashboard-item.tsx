@@ -20,8 +20,8 @@ export interface IDashBoardItemProps {
 export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 	const totalCount = useMemo(() => getTotalItems(lists), [lists])
 
-	const getCountBySector = useCallback((i: number) => {
-		switch (i) {
+	const getCountBySector = useCallback((index: number) => {
+		switch (index) {
 			case 0:
 				return lists.active;
 			case 1:
@@ -34,6 +34,7 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 	}, [lists, totalCount])
 
 	const [count, setCount] = useState(totalCount)
+	const [sector, setSector] = useState(-1);
 
 	const refCanvas = useRef(null);
 
@@ -43,13 +44,17 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 				ref={refCanvas}
 				data={data}
 				onMouseOut={() => {
-					setCount(totalCount)
+					setCount(totalCount);
+					setSector(-1);
 				}}
 				onMouseMoveCapture={(e) => {
 					if (refCanvas && refCanvas.current) {
 						const sector = getElementAtEvent(refCanvas.current, e)[0]?.index;
-						if (sector) {
-							setCount(getCountBySector(sector));
+						if (sector >= 0 ) {
+							if (sector !== count) {
+								setSector(sector);
+								setCount(getCountBySector(sector));
+							}
 						}
 					}
 				}} />
@@ -73,7 +78,7 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 					{getTotalItems(lists)}
 				</p>
 			</Flex>
-			<Flex className={style.statistic__item}>
+			<Flex className={cn(style.statistic__item, sector === 0 && style.statistic__item_hover)}>
 				<p className='text text_type_main-medium'>
 					Активных:
 				</p>
@@ -81,7 +86,7 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 					{lists.active || '0'}
 				</p>
 			</Flex>
-			<Flex className={style.statistic__item}>
+			<Flex className={cn(style.statistic__item, sector === 1 && style.statistic__item_hover)}>
 				<p className='text text_type_main-medium'>
 					Неактивных:
 				</p>
@@ -89,7 +94,7 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 					{lists.inactive || '0'}
 				</p>
 			</Flex>
-			<Flex className={style.statistic__item}>
+			<Flex className={cn(style.statistic__item, sector === 2 && style.statistic__item_hover)}>
 				<p className='text text_type_main-medium'>
 					Завершенных:
 				</p>
