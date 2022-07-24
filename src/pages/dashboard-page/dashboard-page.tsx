@@ -55,11 +55,11 @@ export const DashBoardPage = () => {
       </header>
       <main className='center-container'>
         {dashboard ?
-          <Flex gap={60}>
+          <div className={style.dashboard}>
             <DashBoardItem name='Сценарии' data={dashboardDataScenarios} lists={dashboard.scenarios} />
             <DashBoardItem name='Списки' data={dashboardDataLists} lists={dashboard.lists} />
             <DashBoardItem name='Диалоги' data={dashboardDataDialogs} lists={dashboard.dialogs} />
-          </Flex>
+          </div>
           : <Loader />
         }
       </main>

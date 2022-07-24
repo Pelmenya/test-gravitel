@@ -16,7 +16,7 @@ body {
 }
 
 .input_size_default {
-  width: 400px;
+  width: 300px;
   border-radius: 10px;
   background: var(--text-primary-color);
 }
