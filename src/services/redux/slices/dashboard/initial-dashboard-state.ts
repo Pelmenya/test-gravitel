@@ -4,6 +4,7 @@ const backgroundColor = 'rgba(255, 206, 86, 0.2)';
 const hoverBackgroundColor = 'rgba(255, 206, 86, 1)';
 const borderColor = 'rgba(255, 206, 86, 1)';
 const borderWidth = 2;
+
 const initialChartData = {
 	datasets: [
 		{
@@ -28,6 +29,7 @@ const initialChartData = {
 		},
 	],
 }
+
 export const initialDashBoardState = {
 	loading: 'idle',
 	dashboard: null,
