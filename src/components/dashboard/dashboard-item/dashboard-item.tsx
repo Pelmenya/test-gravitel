@@ -33,8 +33,11 @@ export interface IDashBoardItemProps {
 export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 	const dispatch = useAppDispatch();
 	const totalCount = useMemo(() => getTotalItems(lists), [lists]);
+	const [count, setCount] = useState(totalCount)
+	const [sector, setSector] = useState(-1);
+	const refCanvas = useRef(null);
 
-	const dispatchBGSectors = (colors: string[]) => {
+	const dispatchBGSectors = useCallback((colors: string[]) => {
 		switch (name) {
 			case 'Сценарии':
 				dispatch(setBGColorScenarios(colors));
@@ -46,13 +49,9 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 				dispatch(setBGColorDialogs(colors));
 				break;
 		}
-	};
+	}, [name, dispatch]);
 
-	useEffect(() => {
-		setCount(totalCount)
-	}, [totalCount] )
-
-	const getCountBySector = (index: number) => {
+	const getCountBySector = useCallback((index: number) => {
 		switch (index) {
 			case 0:
 				return lists.active;
@@ -63,17 +62,21 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 			default:
 				return totalCount;
 		}
-	};
+	}, [totalCount, lists]);
 
 	const setInitialState = useCallback(() => {
 		setCount(totalCount);
 		setSector(-1);
 	}, [totalCount])
 
-	const [count, setCount] = useState(totalCount)
-	const [sector, setSector] = useState(-1);
+	const onMouseOutHandler = useCallback(() => {
+		dispatchBGSectors(initialBGcolor)
+		setInitialState();
+	}, [dispatchBGSectors, setInitialState])
 
-	const refCanvas = useRef(null);
+	useEffect(() => {
+		setCount(totalCount)
+	}, [totalCount])
 
 	return (<Flex flexDirection='column' gap={40}>
 		<div className={style.container}>
@@ -113,10 +116,7 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 					dispatchBGSectors(hoverBGAllSectors)
 					setInitialState();
 				}}
-				onMouseOut={() => {
-					dispatchBGSectors(initialBGcolor)
-					setInitialState();
-				}}
+				onMouseOut={onMouseOutHandler}
 			>
 				<p className='text text_type_main-medium'>
 					Всего:
@@ -135,10 +135,7 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 					dispatchBGSectors(hoverBGSector0)
 				}
 				}
-				onMouseOut={() => {
-					dispatchBGSectors(initialBGcolor)
-					setInitialState();
-				}}
+				onMouseOut={onMouseOutHandler}
 			>
 				<p className='text text_type_main-medium'>
 					Активных:
@@ -156,10 +153,7 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 					setCount(getCountBySector(1))
 					dispatchBGSectors(hoverBGSector1)
 				}}
-				onMouseOut={() => {
-					dispatchBGSectors(initialBGcolor)
-					setInitialState();
-				}}
+				onMouseOut={onMouseOutHandler}
 			>
 				<p className='text text_type_main-medium'>
 					Неактивных:
@@ -178,10 +172,7 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 					setCount(getCountBySector(2))
 					dispatchBGSectors(hoverBGSector2)
 				}}
-				onMouseOut={() => {
-					dispatchBGSectors(initialBGcolor)
-					setInitialState();
-				}}
+				onMouseOut={onMouseOutHandler}
 			>
 				<p className='text text_type_main-medium'>
 					Завершенных:
