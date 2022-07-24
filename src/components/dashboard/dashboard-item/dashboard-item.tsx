@@ -2,12 +2,14 @@ import cn from 'classnames';
 import { Chart as ChartJS, ArcElement } from 'chart.js';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { Pie, getElementAtEvent } from 'react-chartjs-2';
-import { IDashBoardDataItem } from '../../../services/redux/slices/dashboard/dashboard';
+import { IDashBoardDataItem, setBGColorDialogs, setBGColorLists, setBGColorScenarios } from '../../../services/redux/slices/dashboard/dashboard';
 import { getTotalItems } from '../../../utils/functions/getTotaltems';
 import { IStatistic } from '../../../utils/types/dashboard';
 import { Flex } from '../../flex/flex';
 import { Title } from '../../title/title';
 import style from './dashboard-item.module.css';
+import { useAppDispatch } from '../../../hooks/use-app-dispatch';
+import { hoverBGAllSectors, hoverBGSector0, hoverBGSector1, hoverBGSector2, initialBGcolor } from '../../../services/redux/slices/dashboard/charts-colors';
 
 ChartJS.register(ArcElement);
 
@@ -18,7 +20,22 @@ export interface IDashBoardItemProps {
 }
 
 export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
-	const totalCount = useMemo(() => getTotalItems(lists), [lists])
+	const dispatch = useAppDispatch();
+	const totalCount = useMemo(() => getTotalItems(lists), [lists]);
+
+	const dispatchBGSectors = useCallback((colors: string[]) => {
+		switch (name) {
+			case 'Сценарии':
+				dispatch(setBGColorScenarios(colors));
+				break;
+			case 'Списки':
+				dispatch(setBGColorLists(colors));
+				break;
+			case 'Диалоги':
+				dispatch(setBGColorDialogs(colors));
+				break;
+		}
+	}, [dispatch, name]);
 
 	const getCountBySector = useCallback((index: number) => {
 		switch (index) {
@@ -74,38 +91,65 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 			</div>
 		</div>
 		<Flex className={style.statistic} flexDirection='column' gap={16}>
-			<Flex className={style.statistic__item}>
+			<div
+				className={style.statistic__item}
+				onMouseOver={() => dispatchBGSectors(hoverBGAllSectors)}
+				onMouseOut={() => dispatchBGSectors(initialBGcolor)}
+			>
 				<p className='text text_type_main-medium'>
 					Всего:
 				</p>
 				<p className={'text constructor-element__price'}>
 					{getTotalItems(lists)}
 				</p>
-			</Flex>
-			<Flex className={cn(style.statistic__item, sector === 0 && style.statistic__item_hover)}>
+			</div>
+			<div
+				className={
+					cn(style.statistic__item,
+						sector === 0 && style.statistic__item_hover)
+				}
+				onMouseOver={() => dispatchBGSectors(hoverBGSector0)}
+				onMouseOut={() => dispatchBGSectors(initialBGcolor)}
+			>
 				<p className='text text_type_main-medium'>
 					Активных:
 				</p>
 				<p className={'text constructor-element__price'}>
 					{lists.active || '0'}
 				</p>
-			</Flex>
-			<Flex className={cn(style.statistic__item, sector === 1 && style.statistic__item_hover)}>
+			</div>
+			<div className={
+				cn(
+					style.statistic__item, sector === 1 &&
+				style.statistic__item_hover
+				)}
+				onMouseOver={() => dispatchBGSectors(hoverBGSector1)}
+				onMouseOut={() => dispatchBGSectors(initialBGcolor)}
+
+			>
 				<p className='text text_type_main-medium'>
 					Неактивных:
 				</p>
 				<p className={'text constructor-element__price'}>
 					{lists.inactive || '0'}
 				</p>
-			</Flex>
-			<Flex className={cn(style.statistic__item, sector === 2 && style.statistic__item_hover)}>
+			</div>
+			<div 
+				className={
+					cn(
+						style.statistic__item, sector === 2 && 
+						style.statistic__item_hover
+					)}
+				onMouseOver={() => dispatchBGSectors(hoverBGSector2)}
+				onMouseOut={() => dispatchBGSectors(initialBGcolor)}
+				>
 				<p className='text text_type_main-medium'>
 					Завершенных:
 				</p>
 				<p className={'text constructor-element__price'}>
 					{lists.completed || '0'}
 				</p>
-			</Flex>
+			</div>
 		</Flex>
 	</Flex>
 	)
