@@ -1,15 +1,26 @@
 import cn from 'classnames';
 import { Chart as ChartJS, ArcElement } from 'chart.js';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pie, getElementAtEvent } from 'react-chartjs-2';
-import { IDashBoardDataItem, setBGColorDialogs, setBGColorLists, setBGColorScenarios } from '../../../services/redux/slices/dashboard/dashboard';
+import {
+	IDashBoardDataItem,
+	setBGColorDialogs,
+	setBGColorLists,
+	setBGColorScenarios
+} from '../../../services/redux/slices/dashboard/dashboard';
 import { getTotalItems } from '../../../utils/functions/getTotaltems';
 import { IStatistic } from '../../../utils/types/dashboard';
 import { Flex } from '../../flex/flex';
 import { Title } from '../../title/title';
 import style from './dashboard-item.module.css';
 import { useAppDispatch } from '../../../hooks/use-app-dispatch';
-import { hoverBGAllSectors, hoverBGSector0, hoverBGSector1, hoverBGSector2, initialBGcolor } from '../../../services/redux/slices/dashboard/charts-colors';
+import {
+	hoverBGAllSectors,
+	hoverBGSector0,
+	hoverBGSector1,
+	hoverBGSector2,
+	initialBGcolor
+} from '../../../services/redux/slices/dashboard/charts-colors';
 
 ChartJS.register(ArcElement);
 
@@ -23,7 +34,7 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 	const dispatch = useAppDispatch();
 	const totalCount = useMemo(() => getTotalItems(lists), [lists]);
 
-	const dispatchBGSectors = useCallback((colors: string[]) => {
+	const dispatchBGSectors = (colors: string[]) => {
 		switch (name) {
 			case 'Сценарии':
 				dispatch(setBGColorScenarios(colors));
@@ -35,9 +46,13 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 				dispatch(setBGColorDialogs(colors));
 				break;
 		}
-	}, [dispatch, name]);
+	};
 
-	const getCountBySector = useCallback((index: number) => {
+	useEffect(() => {
+		setCount(totalCount)
+	}, [totalCount] )
+
+	const getCountBySector = (index: number) => {
 		switch (index) {
 			case 0:
 				return lists.active;
@@ -48,7 +63,12 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 			default:
 				return totalCount;
 		}
-	}, [lists, totalCount])
+	};
+
+	const setInitialState = useCallback(() => {
+		setCount(totalCount);
+		setSector(-1);
+	}, [totalCount])
 
 	const [count, setCount] = useState(totalCount)
 	const [sector, setSector] = useState(-1);
@@ -60,16 +80,12 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 			<Pie
 				ref={refCanvas}
 				data={data}
-				onMouseOut={() => {
-					setCount(totalCount);
-					setSector(-1);
-				}}
+				onMouseOut={setInitialState}
 				onMouseMoveCapture={(e) => {
 					if (refCanvas && refCanvas.current) {
 						const sector = getElementAtEvent(refCanvas.current, e)[0]?.index;
 						if (sector === undefined) {
-							setCount(totalCount)
-							setSector(-1);
+							setInitialState();
 						}
 						if (sector >= 0) {
 							if (sector !== count) {
@@ -93,14 +109,20 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 		<Flex className={style.statistic} flexDirection='column' gap={16}>
 			<div
 				className={style.statistic__item}
-				onMouseOver={() => dispatchBGSectors(hoverBGAllSectors)}
-				onMouseOut={() => dispatchBGSectors(initialBGcolor)}
+				onMouseOver={() => {
+					dispatchBGSectors(hoverBGAllSectors)
+					setInitialState();
+				}}
+				onMouseOut={() => {
+					dispatchBGSectors(initialBGcolor)
+					setInitialState();
+				}}
 			>
 				<p className='text text_type_main-medium'>
 					Всего:
 				</p>
 				<p className={'text constructor-element__price'}>
-					{getTotalItems(lists)}
+					{totalCount}
 				</p>
 			</div>
 			<div
@@ -108,8 +130,15 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 					cn(style.statistic__item,
 						sector === 0 && style.statistic__item_hover)
 				}
-				onMouseOver={() => dispatchBGSectors(hoverBGSector0)}
-				onMouseOut={() => dispatchBGSectors(initialBGcolor)}
+				onMouseOver={() => {
+					setCount(getCountBySector(0))
+					dispatchBGSectors(hoverBGSector0)
+				}
+				}
+				onMouseOut={() => {
+					dispatchBGSectors(initialBGcolor)
+					setInitialState();
+				}}
 			>
 				<p className='text text_type_main-medium'>
 					Активных:
@@ -123,9 +152,14 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 					style.statistic__item, sector === 1 &&
 				style.statistic__item_hover
 				)}
-				onMouseOver={() => dispatchBGSectors(hoverBGSector1)}
-				onMouseOut={() => dispatchBGSectors(initialBGcolor)}
-
+				onMouseOver={() => {
+					setCount(getCountBySector(1))
+					dispatchBGSectors(hoverBGSector1)
+				}}
+				onMouseOut={() => {
+					dispatchBGSectors(initialBGcolor)
+					setInitialState();
+				}}
 			>
 				<p className='text text_type_main-medium'>
 					Неактивных:
@@ -134,15 +168,21 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 					{lists.inactive || '0'}
 				</p>
 			</div>
-			<div 
+			<div
 				className={
 					cn(
-						style.statistic__item, sector === 2 && 
-						style.statistic__item_hover
+						style.statistic__item, sector === 2 &&
+					style.statistic__item_hover
 					)}
-				onMouseOver={() => dispatchBGSectors(hoverBGSector2)}
-				onMouseOut={() => dispatchBGSectors(initialBGcolor)}
-				>
+				onMouseOver={() => {
+					setCount(getCountBySector(2))
+					dispatchBGSectors(hoverBGSector2)
+				}}
+				onMouseOut={() => {
+					dispatchBGSectors(initialBGcolor)
+					setInitialState();
+				}}
+			>
 				<p className='text text_type_main-medium'>
 					Завершенных:
 				</p>
