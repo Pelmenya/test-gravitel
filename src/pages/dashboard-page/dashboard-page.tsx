@@ -28,23 +28,38 @@ export const DashBoard = () => {
       dispatch(fetchDashBoardData(accessToken));
   }, [accessToken, dispatch])
 
-  const ref = useRef(null);
+  const refScenarios = useRef(null);
+  const refLists = useRef(null);
+  const refDialogs = useRef(null);
 
-  useEffect(() => {
-    if (ref.current) {
-      const { current } = ref;
-    }
-  }, [ref])
 
   return (
     <main className='center-container'>
       <Flex gap={60}>
         <div className={style.container}>
           <Pie
-            ref={ref}
+            ref={refScenarios}
             data={dashboardDataScenarios}
             onMouseMove={(e) => {
-              if (ref && ref.current) console.log(getElementAtEvent(ref.current, e))
+              if (refScenarios && refScenarios.current) console.log(getElementAtEvent(refScenarios.current, e))
+            }} />
+          <div className={style.info}></div>
+        </div>
+        <div className={style.container}>
+          <Pie
+            ref={refLists}
+            data={dashboardDataLists}
+            onMouseMove={(e) => {
+              if (refLists && refLists.current) console.log(getElementAtEvent(refLists.current, e))
+            }} />
+          <div className={style.info}></div>
+        </div>
+        <div className={style.container}>
+          <Pie
+            ref={refDialogs}
+            data={dashboardDataDialogs}
+            onMouseMove={(e) => {
+              if (refDialogs && refDialogs.current) console.log(getElementAtEvent(refDialogs.current, e))
             }} />
           <div className={style.info}></div>
         </div>

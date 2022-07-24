@@ -45,7 +45,17 @@ const dashBoardSlice = createSlice({
 				action.payload.scenarios.active, 
 				action.payload.scenarios.inactive, 
 				action.payload.scenarios.completed
-			]
+			];
+			state.dashboardDataDialogs.datasets[0].data = [
+				action.payload.dialogs.active, 
+				action.payload.dialogs.inactive, 
+				action.payload.dialogs.completed
+			];
+			state.dashboardDataLists.datasets[0].data = [
+				action.payload.lists.active, 
+				action.payload.lists.inactive, 
+				action.payload.lists.completed
+			];
 			state.loading = 'succeeded';
 		});
 		builder.addCase(fetchDashBoardData.rejected, (state, action) => {
