@@ -50,7 +50,11 @@ export const DashBoardItem = ({ data, lists, name }: IDashBoardItemProps) => {
 				onMouseMoveCapture={(e) => {
 					if (refCanvas && refCanvas.current) {
 						const sector = getElementAtEvent(refCanvas.current, e)[0]?.index;
-						if (sector >= 0 ) {
+						if (sector === undefined) {
+							setCount(totalCount)
+							setSector(-1);
+						}
+						if (sector >= 0) {
 							if (sector !== count) {
 								setSector(sector);
 								setCount(getCountBySector(sector));
