@@ -1,5 +1,5 @@
 # test-gravitel
-[Сайт на Heroku](https://test-gravitel.herokuapp.com/)
+# [Сайт на Heroku](https://test-gravitel.herokuapp.com/)
 
 Тестовое задание для фронтенд-разработчика Gravitel
 
